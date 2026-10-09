@@ -136,10 +136,10 @@ e.g. "p":"-0,316226125,-0,4188593,...". A naive s.split(",") splits
 each float in two, and json.loads fails outright. I wrote a custom
 streaming parser that:
 
-- extracts p / pose strings with a regex,
--inside each string, matches -?\d+(?:,\d+)? so decimal commas stayattached to their number,
--converts , → . per token,
--never touches the JSON-level commas.
+- extracts p / pose strings with a regex
+- inside each string, matches -?\d+(?:,\d+)? so decimal commas stayattached to their number,
+- converts , → . per token,
+- never touches the JSON-level commas.
 
 The first line is special: cameraIntrinsics / cameraExtrinsics are
 valid JSON and use standard dots, so they are parsed separately.
