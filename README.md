@@ -16,8 +16,6 @@ head orientation, and body joints with a time slider.
 - [Results](#results)
 - [Observations](#observations)
 - [Challenges & solutions](#challenges--solutions)
-- [Repository structure](#repository-structure)
-- [What could be improved](#what-could-be-improved)
 
 ## What's inside
 
