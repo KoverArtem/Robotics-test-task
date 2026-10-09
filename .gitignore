@@ -1,0 +1,39 @@
+# --- Данные (большие, не коммитим) ---
+data/
+*.txt
+*.mp4
+*.mov
+*.avi
+
+# --- Артефакты, которые пересобираются из данных ---
+outputs/tracking.npz
+outputs/*.mp4
+outputs/*.gif
+
+# Но PNG-графики оставляем (маленькие, для README)
+!outputs/figures/*.png
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+*~
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- uv ---
+uv.lock
