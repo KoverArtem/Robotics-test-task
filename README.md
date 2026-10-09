@@ -85,68 +85,67 @@ python src/visualize_3d.py --step 10
 # open outputs/hand_animation.html in a browser
 ```
 
-Approach
+## Approach
 
-    I chose interactive 3D visualization as the primary representation,
-    since the tracked motion lives in 3D space. The scene is rendered with
-    Plotly into a self-contained HTML file — no server, no build step —
-    and shows both hand skeletons (26 joints each), head position with a
-    forward-vector arrow, and 24 body joints, with a time slider and
-    Play/Pause. As a secondary analytical layer I added six 2D plots
-    (Matplotlib): wrist trajectories in three projections, wrist speed over
-    time, hand activity timeline, head gaze direction, and finger flexion
-    angles, plus a combined dashboard.
+I chose interactive 3D visualization as the primary representation,
+since the tracked motion lives in 3D space. The scene is rendered with
+Plotly into a self-contained HTML file — no server, no build step —
+and shows both hand skeletons (26 joints each), head position with a
+forward-vector arrow, and 24 body joints, with a time slider and
+Play/Pause. As a secondary analytical layer I added six 2D plots
+(Matplotlib): wrist trajectories in three projections, wrist speed over
+time, hand activity timeline, head gaze direction, and finger flexion
+angles, plus a combined dashboard.
 
-    Controls in the 3D scene: drag to pan, wheel to zoom, ← / → to
-    rotate the camera, R to reset the view, slider to scrub through time.
+Controls in the 3D scene: drag to pan, wheel to zoom, ← / → to
+rotate the camera, R to reset the view, slider to scrub through time.
 
-Results
+## Results
 
 ![Figure Dashboard](outputs/figures/00_dashboard.png)
 
-Open the full interactive 3D scene
-[3D scene](https://koverartem.github.io/Robotics-test-task/outputs/hand_animation.html)
+Open the full interactive [3D scene](https://koverartem.github.io/Robotics-test-task/outputs/hand_animation.html)
 
 
-Observations
+## Observations
 
-    Only the left hand is actively used. Right hand reports
-    isActive = 1 in 99.4% of frames but stays still — confirmed by the
-    near-zero wrist speed in the video.
+Only the left hand is actively used. Right hand reports
+isActive = 1 in 99.4% of frames but stays still — confirmed by the
+near-zero wrist speed in the video.
 
-    The user looks down at the workspace. The head's forward vector
-    stays around (-0.57, -0.24, +0.78) — mostly forward.
+The user looks down at the workspace. The head's forward vector
+stays around (-0.57, -0.24, +0.78) — mostly forward.
 
-    Wrist speed. Left wrist median ~0.05 m/s (static, holding the
-    controller), right wrist median ~0.4 m/s with peaks up to ~0.9 m/s.
+Wrist speed. Left wrist median ~0.05 m/s (static, holding the
+controller), right wrist median ~0.4 m/s with peaks up to ~0.9 m/s.
 
-    Finger curve on the left hand is periodic (~30–40 s), with the
-    index finger flexing more than the little finger during grasp.
+Finger curve on the left hand is periodic (~30–40 s), with the
+index finger flexing more than the little finger during grasp.
 
-    Two independent time scales. predictTime is in microseconds
-    (runtime clock), timeStampNs in Unix nanoseconds. Their ranges
-    differ by ~1000×, but the median step is identical (11.12 ms), so
-    predictTime is used for motion timing.
+Two independent time scales. predictTime is in microseconds
+(runtime clock), timeStampNs in Unix nanoseconds. Their ranges
+differ by ~1000×, but the median step is identical (11.12 ms), so
+predictTime is used for motion timing.
 
 
-Challenges & solutions
+## Challenges & solutions
 
-    Parsing the "JSON with commas" was the main difficulty. The file
-    uses , as both the decimal separator and the JSON field separator —
-    e.g. "p":"-0,316226125,-0,4188593,...". A naive s.split(",") splits
-    each float in two, and json.loads fails outright. I wrote a custom
-    streaming parser that:
+Parsing the "JSON with commas" was the main difficulty. The file
+uses , as both the decimal separator and the JSON field separator —
+e.g. "p":"-0,316226125,-0,4188593,...". A naive s.split(",") splits
+each float in two, and json.loads fails outright. I wrote a custom
+streaming parser that:
 
-        extracts p / pose strings with a regex,
+    extracts p / pose strings with a regex,
 
-        inside each string, matches -?\d+(?:,\d+)? so decimal commas stay
-        attached to their number,
+    inside each string, matches -?\d+(?:,\d+)? so decimal commas stay
+    attached to their number,
 
-        converts , → . per token,
+    converts , → . per token,
 
-        never touches the JSON-level commas.
+    never touches the JSON-level commas.
 
-    The first line is special: cameraIntrinsics / cameraExtrinsics are
-    valid JSON and use standard dots, so they are parsed separately.
-    Combined with the streaming approach, parsing the 250 MB file takes
-    ~7 seconds.
+The first line is special: cameraIntrinsics / cameraExtrinsics are
+valid JSON and use standard dots, so they are parsed separately.
+Combined with the streaming approach, parsing the 250 MB file takes
+~7 seconds.
